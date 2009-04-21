@@ -68,11 +68,11 @@ def print_statuses(statuses, sort = true, time_format = nil)
 
   output_text = ''
 
+  user_login_ids = []
   statuses.sort{|a, b| a.epoch <=> b.epoch}.each do |s|
     text = s.text
-require 'pp'
-pp s.user_login_id
-    status_color = config.plugins.stdout.colors[s.user.object_id.hash % config.plugins.stdout.colors.size]
+    user_login_ids << s.user_login_id unless user_login_ids.include?(s.user_login_id)
+    status_color = config.plugins.stdout.colors[user_login_ids.index(s.user_login_id) % config.plugins.stdout.colors.size]
     status = "#{s.user.screen_name}: #{TermColor.escape(text)}"
 
     time = "[wassr] [#{Time.at(s.epoch).strftime(time_format)}]"
