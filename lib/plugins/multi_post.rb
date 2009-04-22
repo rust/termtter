@@ -15,13 +15,15 @@ end
 
 Termtter::Client.register_hook(
   :name => :multi_post,
-  :points => [:post_exec_update],
+  :points => [:modify_arg_for_update, :modify_arg_for_reply],
   :exec_proc => lambda {|cmd, arg|
     begin
       Termtter::Client.wassr_update(arg.strip)
     rescue
       puts "RuntimeError: #{$!}"
     end
+
+    return arg
   }
 )
 

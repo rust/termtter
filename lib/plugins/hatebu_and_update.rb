@@ -45,7 +45,7 @@ module Termtter::Client
         end
       end
     },
-    :help => ['hatebu_and_update, hau URL comment', 'Hatena bookmark a URL, and update']
+    :help => ['hatebu_and_update,hau URL comment', 'Hatena bookmark a URL, and update']
   )
 end
 

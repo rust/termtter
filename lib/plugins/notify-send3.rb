@@ -33,7 +33,7 @@ Termtter::Client.register_hook(
     Thread.start do
       statuses.each do |s|
         text = CGI.escapeHTML(s.text)
-        text = %Q{"#{text}"} if text =~ /^--/
+        text = %Q{"#{text}"} if text =~ /^-/
         text.gsub!(%r{https?://[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+},'<a href="\0">\0</a>')
         system 'notify-send', s.user.screen_name, text, '-i', get_icon_path(s)
         sleep 0.1
