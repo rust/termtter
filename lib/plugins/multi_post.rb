@@ -18,7 +18,8 @@ Termtter::Client.register_hook(
   :points => [:modify_arg_for_update, :modify_arg_for_reply],
   :exec_proc => lambda {|cmd, arg|
     begin
-      Termtter::Client.wassr_update(arg.strip)
+      wassr_arg = arg.gsub(/\d{10,}/, '')
+      Termtter::Client.wassr_update(wassr_arg.strip)
     rescue
       puts "RuntimeError: #{$!}"
     end

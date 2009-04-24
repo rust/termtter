@@ -56,7 +56,7 @@ module Termtter::Client
       end
     },
     :completion_proc => lambda {|cmd, arg|
-      find_user_candidates(arg, "#{cmd} %s") + 
+      find_user_candidates(arg, "#{cmd} %s") +
         ["list", "sent_list"].grep(/^#{Regexp.quote(arg)}/).map { |i| "#{cmd} #{i}" }
     },
     :help => [
@@ -409,7 +409,7 @@ module Termtter::Client
         public_storage.delete :log4re
       when /^\s*(\d+)\s+(.+)$/
         id, text = $1, $2
-        user = public_storage[:log].select {|l| l.id == id.to_i }.first.user
+        user = public_storage[:log].select {|l| l.id == id.to_i }.first
         update_with_user_and_id(text, user.screen_name, id) if user
       when /^\s*@(\w+)/
         in_reply_to_status_id = Termtter::API.twitter.user($1).status.id rescue nil
@@ -512,7 +512,7 @@ module Termtter::Client
   end
 
   def self.find_user_candidates(a, b)
-    users = 
+    users =
       if a.nil? || a.empty?
         public_storage[:users].to_a
       else
