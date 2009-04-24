@@ -409,7 +409,7 @@ module Termtter::Client
         public_storage.delete :log4re
       when /^\s*(\d+)\s+(.+)$/
         id, text = $1, $2
-        user = public_storage[:log].select {|l| l.id == id.to_i }.first
+        user = public_storage[:log].select {|l| l.id == id.to_i }.first.user
         update_with_user_and_id(text, user.screen_name, id) if user
       when /^\s*@(\w+)/
         in_reply_to_status_id = Termtter::API.twitter.user($1).status.id rescue nil
