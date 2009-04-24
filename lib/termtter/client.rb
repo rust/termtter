@@ -239,39 +239,6 @@ module Termtter
         end
       end
 
-      # TODO: Make pluggable
-      def setup_update_timeline_task()
-        register_command(
-          :name => :_update_timeline,
-          :exec_proc => lambda {|arg|
-            begin
-              args = @since_id ? [{:since_id => @since_id}] : []
-              statuses = Termtter::API.twitter.friends_timeline(*args)
-              unless statuses.empty?
-                print "\e[1K\e[0G" unless win?
-                @since_id = statuses[0].id
-                output(statuses, :update_friends_timeline)
-                Readline.refresh_line
-              end
-            rescue OpenURI::HTTPError => e
-              if e.message == '401 Unauthorized'
-                puts 'Could not login'
-                puts 'plese check your account settings'
-                exit!
-              end
-            rescue => e
-              handle_error(e)
-            end
-          }
-        )
-
-        add_task(:name => :update_timeline, :interval => config.update_interval, :after => config.update_interval) do
-          call_commands('_update_timeline')
-        end
-
-        call_commands('_update_timeline')
-      end
-
       def trap_setting()
         begin
           stty_save = `stty -g`.chomp
@@ -343,12 +310,22 @@ module Termtter
         setup_logger()
         post_config_load()
 
-        call_hooks(:initialize)
+        config.system.eval_scripts.each do |script|
+          begin
+            eval script
+          rescue Exception => e
+            handle_error(e)
+          end
+        end
 
-        setup_update_timeline_task()
+        config.system.run_commands.each { |cmd| call_commands(cmd) }
 
-        @task_manager.run()
-        start_input_thread()
+        unless config.system.cmd_mode
+          call_hooks(:initialize)
+          plugin('update_timeline')
+          @task_manager.run()
+          start_input_thread()
+        end
       end
 
       def handle_error(e)
